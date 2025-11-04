@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - University Portal</title>
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    
+    <!-- ✅ Correct static file reference -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="auth-body">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-5">
+                <div class="auth-card card-animate">
+                    <div class="text-center mb-4">
+                        <div class="logo-icon">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <h2 class="auth-title">University Portal</h2>
+                        <p class="auth-subtitle">Assignment Management System</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'user:login_view' %}">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-icon">
+                                <i class="bi bi-envelope"></i>
+                                <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        
+
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-icon">
+                                <i class="bi bi-lock"></i>
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-animate mb-3">
+                            <span>Login</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+<!-- 
+                        <div class="text-center">
+                            <span class="text-muted">Don't have an account? </span>
+                            <a href="{% url 'user:signup' %}" class="link-primary fw-semibold">Register</a>
+                        </div> -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>

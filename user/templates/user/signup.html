@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - University Portal</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+
+    <!-- ✅ Use Django static -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="auth-body">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100 py-5">
+            <div class="col-md-6">
+                <div class="auth-card card-animate">
+                    <div class="text-center mb-4">
+                        <div class="logo-icon">
+                            <i class="bi bi-mortarboard-fill"></i>
+                        </div>
+                        <h2 class="auth-title">Create Account</h2>
+                        <p class="auth-subtitle">Join the University Portal</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- ✅ Fixed form -->
+                    <form method="POST" action="">
+                        {% csrf_token %}
+
+                        <div class="form-group mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <div class="input-icon">
+                                <i class="bi bi-person"></i>
+                                <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Enter your full name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-icon">
+                                <i class="bi bi-envelope"></i>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-icon">
+                                <i class="bi bi-lock"></i>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="role" class="form-label">I am a</label>
+                            <div class="input-icon">
+                                <i class="bi bi-people"></i>
+                                <select class="form-select" id="role" name="role" required>
+                                    <option value="" selected disabled>Select your role</option>
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="courseClass" class="form-label">Class/Course</label>
+                            <div class="input-icon">
+                                <i class="bi bi-book"></i>
+                                <input type="text" class="form-control" id="courseClass" name="course_class" placeholder="Enter your class or course name" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-animate mb-3">
+                            <span>Register</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+
+                        <div class="text-center">
+                            <span class="text-muted">Already have an account? </span>
+                            <!-- ✅ Django URL reference -->
+                            <a href="{% url 'user:login_view' %}" class="link-primary fw-semibold">Login</a>
+                        </div>
+                    </form>
+                    <!-- ✅ End form -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>

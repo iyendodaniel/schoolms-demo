@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Submissions - University Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-small">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h5>University Portal</h5>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'teacher:teacher_dashboard' %}" class="nav-link">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'teacher:upload_assignment' %}" class="nav-link">
+                    <i class="bi bi-upload"></i>
+                    <span>Upload Assignment</span>
+                </a>
+                <a href="{% url 'teacher:grade_submissions' %}" class="nav-link">
+                    <i class="bi bi-folder"></i>
+                    <span>Grade Submissions</span>
+                </a>
+                <a href="{% url 'teacher:view_submissions' %}" class="nav-link active">
+                    <i class="bi bi-folder-check"></i>
+                    <span>View Submissions</span>
+                </a>
+                <a href="{% url 'teacher:logout' %}" class="nav-link nav-link-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-navbar">
+                <h4 class="greeting-text d-flex align-items-center justify-content-between">
+                    <div>
+                        Welcome back, <span class="user-name">{{ teacher }}</span> 👋
+                    </div>
+                    <div>
+                        Class/Course: <span class="user-name">{{ teacher.course_class }}</span>
+                    </div>
+                </h4>
+            </div>
+
+            <div class="content-area">
+                <div class="content-card fade-in">
+                    <div class="card-header-custom">
+                        <h5><i class="bi bi-folder-check text-primary"></i> Student Submissions</h5>
+                    </div>
+
+                    <form method="get" class="mb-3">
+                        <label for="assignment_id" class="form-label">Filter by Assignment:</label>
+                        <select name="assignment_id" id="assignment_id" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Assignments</option>
+                            {% for assignment in assignments %}
+                            <option value="{{ assignment.id }}" {% if assignment.id|stringformat:'s' == selected_assignment_id %}selected{% endif %}>
+                                {{ assignment.title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+
+                    <div class="table-responsive">
+                            <table class="table table-hover submissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Assignment</th>
+                                        <th>Submitted Date</th>
+                                        <th>Grade</th>
+                                        <th>Class/Course</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for submission in submissions %}
+                                    <tr class="table-row-animate">
+                                        <input type="hidden" name="submission_id_{{ submission.id }}" value="{{ submission.id }}">
+                                        <td>
+                                            <div class="student-info">
+                                                <i class="bi bi-person-circle"></i>
+                                                <span>{{ submission.student.full_name }}</span>
+                                            </div>
+                                        </td>
+                                        <td>{{ submission.assignment.title }}</td>
+                                        <td>{{ submission.submission_date }}</td>
+                                        <td>
+                                            <span class="badge 
+                                                {% if submission.grade|upper == 'A' or submission.grade|upper == 'A+' or submission.grade|upper == 'A-' %}
+                                                    grade-a
+                                                {% elif submission.grade|upper == 'B' or submission.grade|upper == 'B+' %}
+                                                    grade-b
+                                                {% else %}
+                                                    bg-info
+                                                {% endif %}">
+                                                {{ submission.grade|default:"-" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="user-name">{{ submission.student.course_class }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                               </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="src/js/animations.js"></script>
+</body>
+</html>

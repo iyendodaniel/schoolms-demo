@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - University Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-small">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h5>University Portal</h5>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'student:student_dashboard' %}" class="nav-link active">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'student:results' %}" class="nav-link">
+                    <i class="bi bi-trophy-fill"></i>
+                    <span>My Results</span>
+                </a>
+                <a href="{% url 'student:logout' %}" class="nav-link nav-link-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-navbar">
+                <h4 class="greeting-text d-flex align-items-center justify-content-between">
+                    <div>
+                        Welcome back, <span class="user-name">{{ student }}</span> 👋
+                    </div>
+                    <div>
+                        Class/Course: <span class="user-name">{{ student.course_class }}</span>
+                    </div>
+                </h4>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+               {% endfor %}
+            {% endif %}
+
+            <div class="content-area">
+                <div class="welcome-banner fade-in">
+                    <h2>Welcome back!</h2>
+                    <p>View your assignments and submit your work</p>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card stat-card-primary card-animate">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h6>Total Assignments</h6>
+                                    <div class="stat-value">{{ total_class_assignments }}</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="stat-card stat-card-success card-animate">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h6>Submitted</h6>
+                                    <div class="stat-value">{{ total_submitted_assignments }}</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="stat-card stat-card-warning card-animate">
+                            <div class="stat-content">
+                                <div class="stat-info">
+                                    <h6>Pending</h6>
+                                    <div class="stat-value">{{ total_pending_assignments }}</div>
+                                </div>
+                                <div class="stat-icon">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="content-card fade-in">
+                    <div class="card-header-custom">
+                        <h5><i class="bi bi-list-task text-primary"></i> Available Assignments</h5>
+                    </div>
+
+                    <div class="assignments-grid">
+                        {% for assignment in available_assignments %}
+                            <div class="assignment-card card-animate">
+                                <div class="assignment-header">
+                                    <h6>{{ assignment.title }}</h6>
+
+                                    {% if assignment.id in submitted_ids %}
+                                        <span class="badge badge-success">Submitted</span>
+                                    {% elif assignment.due_date < today %}
+                                        <span class="badge badge-danger">Overdue</span>
+                                    {% else %}
+                                        <span class="badge badge-warning">Pending</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="teacher-info">
+                                    <i class="bi bi-person-circle"></i>
+                                    <span>{{ assignment.teacher.full_name }}</span>
+                                </div>
+
+                                <p class="assignment-description">
+                                    {{ assignment.description|truncatewords:20 }}
+                                </p>
+
+                                <div class="assignment-footer">
+                                    <span class="assignment-meta">
+                                        <i class="bi bi-calendar-event"></i>
+                                        Due: {{ assignment.due_date }}
+                                    </span>
+                                </div>
+
+                                <div class="assignment-actions">
+                                    {% if assignment.id in submitted_ids %}
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            <i class="bi bi-check-circle"></i> Submitted
+                                        </button>
+                                    {% else %}
+                                        <a href="{% url 'student:submit_assignment' assignment.id %}" class="btn btn-primary btn-sm btn-animate">
+                                            <i class="bi bi-upload"></i> Submit
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>No assignments available yet.</p>
+                        {% endfor %}
+                    </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="src/js/animations.js"></script>
+</body>
+</html>

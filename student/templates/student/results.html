@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Results - University Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-small">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h5>University Portal</h5>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'student:student_dashboard' %}" class="nav-link">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'student:results' %}" class="nav-link active">
+                    <i class="bi bi-trophy-fill"></i>
+                    <span>My Results</span>
+                </a>
+                <a href="{% url 'student:logout' %}" class="nav-link nav-link-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-navbar">
+                <h4 class="greeting-text d-flex align-items-center justify-content-between">
+                    <div>
+                        Welcome back, <span class="user-name">{{ student.full_name }}</span> 👋
+                    </div>
+                    <div>
+                        Class/Course: <span class="user-name">{{ student.course_class }}</span>
+                    </div>
+                </h4>
+            </div>
+
+            <div class="content-area">
+                <div class="content-card fade-in">
+                    <div class="card-header-custom">
+                        <h5><i class="bi bi-trophy-fill text-primary"></i> My Results & Grades</h5>
+                    </div>
+
+                    <div class="results-grid">
+                        {% for submission in graded_submissions %}
+                        <div class="result-card card-animate">
+                            <div class="result-header">
+                                <h6>{{ submission.assignment.title }}</h6>
+                                <span class="grade-badge 
+                                    {% if submission.grade|upper == 'A' or submission.grade|upper == 'A+' or submission.grade|upper == 'A-' %}
+                                        grade-a
+                                    {% elif submission.grade|upper == 'B' or submission.grade|upper == 'B+' %}
+                                        grade-b
+                                    {% else %}
+                                        bg-info
+                                    {% endif %}">
+                                    {{ submission.grade|default:"-" }}
+                                </span>
+                            </div>
+
+                            <div class="result-detail">
+                                <label>Date Submitted:</label>
+                                <p>{{ submission.submission_date|date:"F d, Y" }}</p>
+                            </div>
+
+                            <div class="result-detail">
+                                <label>Remark:</label>
+                                <p class="remark-text">
+                                    {{ submission.remark|default:"No remark available yet." }}
+                                </p>
+                            </div>
+
+                            <div class="result-footer">
+                                <a href="{{ submission.file.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-download"></i> Download Submission
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-info text-center mt-3">
+                            No graded results available yet.
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-hover results-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Assignment Title</th>
+                                    <th>Date</th>
+                                    <th>Grade</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for submission in graded_submissions %}
+                                <tr class="table-row-animate">
+                                    <td>{{ submission.assignment.title }}</td>
+                                    <td>{{ submission.submission_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if submission.grade|upper == 'A' or submission.grade|upper == 'A+' or submission.grade|upper == 'A-' %}
+                                                grade-a
+                                            {% elif submission.grade|upper == 'B' or submission.grade|upper == 'B+' %}
+                                                grade-b
+                                            {% else %}
+                                                bg-info
+                                            {% endif %}">
+                                            {{ submission.grade|default:"-" }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ submission.file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No graded results available yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Assignment - University Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon-small">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <h5>University Portal</h5>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{% url 'teacher:teacher_dashboard' %}" class="nav-link">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'teacher:upload_assignment' %}" class="nav-link active">
+                    <i class="bi bi-upload"></i>
+                    <span>Upload Assignment</span>
+                </a>
+                <a href="{% url 'teacher:grade_submissions' %}" class="nav-link">
+                    <i class="bi bi-folder"></i>
+                    <span>Grade Submissions</span>
+                </a>
+                <a href="{% url 'teacher:view_submissions' %}" class="nav-link">
+                    <i class="bi bi-folder-check"></i>
+                    <span>View Submissions</span>
+                </a>
+                <a href="{% url 'teacher:logout' %}" class="nav-link nav-link-logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="top-navbar">
+                <h4 class="greeting-text d-flex align-items-center justify-content-between">
+                    <div>
+                        Welcome back, <span class="user-name">{{ teacher }}</span> 👋
+                    </div>
+                    <div>
+                        Class/Course: <span class="user-name">{{ teacher.course_class }}</span>
+                    </div>
+                </h4>
+            </div>
+
+            <div class="content-area">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="content-card fade-in">
+                            <div class="card-header-custom">
+                                <h5><i class="bi bi-file-earmark-plus text-primary"></i> Create New Assignment</h5>
+                            </div>
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <div class="form-group mb-4">
+                                    <label for="title" class="form-label">Title</label>
+                                    {{ form.title }}
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label for="description" class="form-label">Description</label>
+                                    {{ form.description }}
+                                </div>
+
+                                <div class="form-group mb-4">
+                                    <label for="due_date" class="form-label">Due Date</label>
+                                    {{ form.due_date }}
+                                </div>
+
+                                <!-- Styled file upload area -->
+                                <div class="form-group mb-4">
+                                    <label class="form-label">Upload File (PDF)</label>
+                                    <div class="file-upload-area">
+                                        <!-- Hide the default Django file field -->
+                                        {{ form.file }}
+                                        <label for="assignmentFile" class="file-upload-label">
+                                            <i class="bi bi-cloud-upload"></i>
+                                            <p class="file-upload-text" id="file-name-text">Click to upload PDF file</p>
+                                            <small class="text-muted">Maximum file size: 10MB</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                    <script>
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        const fileInput = document.getElementById("assignmentFile");  // change if id differs
+                                        const fileNameText = document.getElementById("file-name-text");
+
+                                        fileInput.addEventListener("change", () => {
+                                            if (fileInput.files.length > 0) {
+                                                fileNameText.textContent = fileInput.files[0].name;
+                                            } else {
+                                                fileNameText.textContent = "Click to upload PDF file";
+                                            }
+                                        });
+                                    });
+                                    </script>
+
+
+                                <div class="button-group mt-4">
+                                    <button type="submit" class="btn btn-primary btn-animate">
+                                        <i class="bi bi-check-circle"></i> Create Assignment
+                                    </button>
+                                    <a href="{% url 'teacher:teacher_dashboard' %}" class="btn btn-secondary btn-animate">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+</body>
+</html>
